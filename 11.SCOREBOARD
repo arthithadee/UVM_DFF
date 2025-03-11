@@ -1,0 +1,98 @@
+
+class dff_scoreboard extends uvm_scoreboard;
+  `uvm_component_utils(dff_scoreboard)
+
+  uvm_analysis_imp#(dff_seq_item, dff_scoreboard) mon2sb;
+
+  function new(string name = "dff_scoreboard", uvm_component parent);
+    super.new(name, parent);
+    $display("Scoreboard created: %s", name);
+    mon2sb = new("mon2sb", this);
+  endfunction
+
+  
+  function void write(dff_seq_item dff_item);
+    bit expected_dout;
+
+    // Calculate expected dout based on rst and din
+    if (dff_item.rst == 1) begin
+      expected_dout = 0; 
+    end else begin
+      expected_dout = dff_item.din; 
+    end
+
+    // Compare expected dout with actual dout
+    if (dff_item.dout !== expected_dout) begin
+      `uvm_error("SCOREBOARD", $sformatf("Test Failed: din=%b, rst=%b, expected dout=%b, actual dout=%b",dff_item.din, dff_item.rst, expected_dout, dff_item.dout))
+    end else begin
+      `uvm_info("SCOREBOARD", $sformatf("Test Passed: din=%b, rst=%b, dout=%b", dff_item.din, dff_item.rst, dff_item.dout), UVM_LOW)
+    end
+  endfunction
+endclass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*class dff_scoreboard extends uvm_scoreboard;
+  `uvm_component_utils(dff_scoreboard)
+
+  uvm_analysis_imp#(dff_seq_item, dff_scoreboard) mon2sb;
+  uvm_analysis_imp#(dff_seq_item, dff_scoreboard) dr2sb;
+
+  function new(string name = "dff_scoreboard", uvm_component parent);
+    super.new(name, parent);
+    $display("Scoreboard created: %s", name);
+    mon2sb = new("mon2sb", this);
+    dr2sb = new("dr2sb", this);
+  endfunction
+
+  function void write(dff_seq_item dff_item);
+    $display("Scoreboard received item: din=%b, rst=%b, dout=%b", dff_item.din, dff_item.rst, dff_item.dout);
+    if (dff_item.rst == 0) begin
+      
+      if (dff_item.dout == dff_item.din) begin
+        `uvm_info("SCOREBOARD", $sformatf("Test Passed: din=%b, dout=%b, rst=%b", dff_item.din, dff_item.dout, dff_item.rst), UVM_LOW)
+      end else begin
+        `uvm_error("SCOREBOARD", $sformatf("Test Failed: din=%b, dout=%b, rst=%b", dff_item.din, dff_item.dout, dff_item.rst))
+      end
+    end else begin
+      if (dff_item.dout == 0) begin
+        `uvm_info("SCOREBOARD", $sformatf("Test Passed: din=%b, dout=%b, rst=%b", dff_item.din, dff_item.dout, dff_item.rst), UVM_LOW)
+      end else begin
+        `uvm_error("SCOREBOARD", $sformatf("Test Failed: din=%b, dout=%b, rst=%b", dff_item.din, dff_item.dout, dff_item.rst))
+      end
+    end
+  endfunction
+endclass*/
+
