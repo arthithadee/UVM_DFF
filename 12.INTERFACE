@@ -1,0 +1,5 @@
+interface intf(input logic clk);
+  logic din, rst, dout;
+  
+  
+endinterface
