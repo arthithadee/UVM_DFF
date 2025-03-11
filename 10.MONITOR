@@ -1,0 +1,36 @@
+class dff_monitor extends uvm_monitor;
+  `uvm_component_utils(dff_monitor)
+
+  virtual intf vif;
+  uvm_analysis_port#(dff_seq_item) mon2sb;
+
+  function new(string name = "dff_monitor", uvm_component parent);
+    super.new(name, parent);
+    $display("Monitor created: %s", name);
+    mon2sb = new("mon2sb", this);
+  endfunction
+
+  function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    $display("Monitor build phase started");
+    if (!uvm_config_db#(virtual intf)::get(this, "", "vif", vif)) begin
+      `uvm_fatal("MONITOR", "Failed to get interface handle")
+    end
+    $display("Monitor build phase ended");
+  endfunction
+
+  task run_phase(uvm_phase phase);
+    $display("Monitor run phase started");
+    forever begin
+      dff_seq_item dff_item = dff_seq_item::type_id::create("dff_item");
+      @(posedge vif.clk);
+      dff_item.din = vif.din;
+      dff_item.rst = vif.rst;
+      dff_item.dout = vif.dout;
+      mon2sb.write(dff_item);
+      $display("Monitor captured item: din=%b, rst=%b, dout=%b", dff_item.din, dff_item.rst, dff_item.dout);
+    end
+    $display("Monitor run phase ended");
+  endtask
+endclass
+
