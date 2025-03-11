@@ -1,0 +1,16 @@
+module dff(
+    input logic din,
+    input logic clk,
+    input logic rst,
+    output logic dout
+);
+  
+  always @(posedge clk or posedge rst or negedge clk) 
+    begin
+        if (rst) begin
+       assign  dout = 0; 
+        end else begin
+       assign dout= din; 
+        end
+    end
+endmodule
