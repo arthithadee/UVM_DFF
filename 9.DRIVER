@@ -1,0 +1,47 @@
+class dff_driver extends uvm_driver #(dff_seq_item);
+  `uvm_component_utils(dff_driver)
+
+  virtual intf vif; // Virtual interface for driving signals
+  uvm_analysis_port#(dff_seq_item) dr2sb; // Analysis port for sending items to the scoreboard
+
+  function new(string name = "dff_driver", uvm_component parent = null);
+    super.new(name, parent);
+    dr2sb = new("dr2sb", this); // Initialize the analysis port
+    $display("Driver created: %s", name);
+  endfunction
+
+  function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    $display("Driver build phase started");
+    if (!uvm_config_db#(virtual intf)::get(this, "", "vif", vif)) begin
+      `uvm_fatal("DRIVER", "Failed to get interface handle")
+    end
+    $display("Driver build phase ended");
+  endfunction
+dff_seq_item dff_item;
+  task run_phase(uvm_phase phase);
+    $display("Driver run phase started");
+    
+
+    initilize(); // Initialize DUT signals
+    forever begin
+      seq_item_port.get_next_item(dff_item); // Get the next sequence item
+      drive_item(dff_item); // Drive the item to the DUT
+      seq_item_port.item_done();
+      dr2sb.write(dff_item); // Send the item to the analysis port
+      `uvm_info("DFF_DRIVER", $sformatf("Driver drove item: din=%b, rst=%b", dff_item.din, dff_item.rst), UVM_LOW);
+    end
+    $display("Driver run phase ended");
+  endtask
+  
+  task initilize();
+    vif.din  = 1; 
+    vif.rst = 0; 
+  endtask
+
+  task drive_item(dff_seq_item dff_item);
+    @(posedge vif.clk); 
+    vif.rst <= dff_item.rst; 
+    vif.din <= dff_item.din; 
+  endtask
+endclass
