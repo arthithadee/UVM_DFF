@@ -1,0 +1,22 @@
+class dff_sequence extends uvm_sequence #(dff_seq_item);
+  `uvm_object_utils(dff_sequence)
+
+  function new(string name = "dff_sequence");
+    super.new(name);
+    $display("Sequence created: %s", name);
+  endfunction
+ 
+  task body();
+   dff_seq_item dff_item;
+    $display("Sequence started");
+    repeat (55) begin
+      dff_item = dff_seq_item::type_id::create("dff_item");
+      start_item(dff_item);
+      dff_item.din = $urandom_range(0, 1); // Randomize din
+      dff_item.rst = 0; // Reset is inactive
+      finish_item(dff_item);
+      $display("Sequence item sent: din=%b, rst=%b", dff_item.din, dff_item.rst);
+    end
+    $display("Sequence ended");
+  endtask
+endclass
