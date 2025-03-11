@@ -1,0 +1,43 @@
+// reset_sequence
+
+class reset_sequence extends dff_sequence;
+  `uvm_object_utils(reset_sequence)
+
+  function new(string name = "reset_sequence");
+    super.new(name);
+    $display("Reset Sequence created: %s", name);
+  endfunction
+
+  task body();
+    dff_seq_item dff_item;
+    $display("Reset Sequence started");
+
+    
+
+    // Activate reset+test 
+    repeat(10) begin
+    
+      dff_item = dff_seq_item::type_id::create("dff_item");
+      start_item(dff_item);
+      dff_item.rst = 1; // Activate reset
+     dff_item.din = $urandom_range(0, 1); 
+      finish_item(dff_item);
+      $display("Reset Sequence item sent: din=%b, rst=%b ", dff_item.din, dff_item.rst);
+       
+    
+    end
+    $display("Reset Sequence ended");
+
+    // Deactivate reset_test
+    $display("Sequence restarted");
+    repeat (40) begin
+      dff_item = dff_seq_item::type_id::create("dff_item");
+      start_item(dff_item);
+     dff_item.din = $urandom_range(0, 1); 
+      dff_item.rst = 0; 
+      finish_item(dff_item);
+      $display("Sequence item sent: din=%b, rst=%b ", dff_item.din, dff_item.rst);
+    end
+    $display("Sequence ended");
+  endtask
+endclass
