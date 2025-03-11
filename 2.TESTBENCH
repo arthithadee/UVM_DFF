@@ -1,1 +1,45 @@
+// Code your testbench here
+`include "dff_files.pkg"
+`include "dff_interface.sv"
 
+
+ import uvm_pkg::*;
+ import dff_files::*;
+
+module dff_tb_top;
+ 
+ 
+
+  logic clk;
+  intf vif(clk);
+
+  dff DUT(
+    .din(vif.din),
+    .clk(vif.clk),
+    .rst(vif.rst),
+    .dout(vif.dout)
+  );
+  
+  
+   initial begin
+    clk <= 0;
+  end
+
+  always #5 clk = ~clk;
+  
+
+ 
+
+  initial begin
+    uvm_config_db#(virtual intf)::set(null, "*", "vif",vif);
+   fork
+     run_test("dff_test");
+    
+   join
+  end
+
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(1,dff_tb_top);
+  end
+endmodule
