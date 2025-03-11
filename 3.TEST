@@ -1,0 +1,40 @@
+class dff_test extends uvm_test;
+  `uvm_component_utils(dff_test)
+
+  dff_env env_h;
+
+  function new(string name = "dff_test", uvm_component parent);
+    super.new(name, parent);
+    $display("Test created: %s", name);
+  endfunction
+
+  function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    $display("Test build phase started");
+    env_h = dff_env::type_id::create("env_h", this);
+    $display("Test build phase ended");
+  endfunction
+
+  task run_phase(uvm_phase phase);
+    
+    dff_sequence dff_seq;
+    reset_sequence rst_seq;
+
+    phase.raise_objection(this);
+    $display("Test run phase started");
+
+    // Create and start the main sequence
+    dff_seq = dff_sequence::type_id::create("dff_seq");
+     dff_seq.start(env_h.agent_h.sequencer_h);
+    
+    // Create and start the reset sequence
+    rst_seq= reset_sequence::type_id::create("rst_seq");
+    rst_seq.start(env_h.agent_h.sequencer_h);
+    
+   
+
+    phase.drop_objection(this);
+    $display("Test run phase ended");
+        $display("Test run phase ended");
+  endtask
+endclass
