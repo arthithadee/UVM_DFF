@@ -1,0 +1,22 @@
+package dff_files;
+  import uvm_pkg::*;
+  `include "uvm_macros.svh"
+
+  // Include all UVM components
+  
+  `include "dff_seq_item.svh"
+  `include "dff_sequence.svh"
+ 
+  `include "dff_sequencer.svh"
+    
+  `include "reset_test.svh"
+  `include "dff_driver.svh"
+  `include "dff_monitor.svh"
+  
+  `include "dff_agent.svh"
+  `include "dff_scoreboard.svh"
+  `include "dff_env.svh"
+  `include "dff_test.svh"
+  
+
+endpackage
